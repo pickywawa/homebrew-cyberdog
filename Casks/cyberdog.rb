@@ -1,9 +1,9 @@
 cask "cyberdog" do
   arch arm: "arm64", intel: "x64"
 
-  version "1.10.0"
-  sha256 arm:   "f26d0ca5d6f5ad1d3047e8e15195b96eb760c33668a907bc61e4c87452f2fe45",
-         intel: "46dacb5680078475ae918a356e4b38a36cda1e4b1b0cb04768b5b1f0f208f9c4"
+  version "1.10.1"
+  sha256 arm:   "dab4139dde9ae83a9d2e7d38858305896bdd99a2cca70462ea34daad0c449250",
+         intel: "3df83efc51763c2f03b4fdee1f28d2ee6ae55dea546caee829d5c3dca21bc689"
 
   url "https://github.com/pickywawa/cyberdog/releases/download/v#{version}/Cyberdog-#{version}-mac-#{arch}.dmg"
   name "Cyberdog"
@@ -18,13 +18,6 @@ cask "cyberdog" do
   depends_on macos: :ventura
 
   app "Cyberdog.app"
-
-  # Releases are not notarized yet, so Gatekeeper would refuse the quarantined app.
-  # Remove this block once the releases are signed with a Developer ID and notarized.
-  postflight do
-    system_command "/usr/bin/xattr",
-                   args: ["-dr", "com.apple.quarantine", "#{appdir}/Cyberdog.app"]
-  end
 
   zap trash: [
     "~/Library/Application Support/Cyberdog",
