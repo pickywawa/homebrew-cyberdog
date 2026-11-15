@@ -1,0 +1,39 @@
+name: Update cask
+
+# Follows the latest Cyberdog release: updates the version and the two DMG checksums.
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Update to the latest release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UPSTREAM: pickywawa/cyberdog
+        run: |
+          set -euo pipefail
+          tag=$(gh release view --repo "$UPSTREAM" --json tagName --jq .tagName)
+          version="${tag#v}"
+          current=$(sed -n 's/^  version "\(.*\)"$/\1/p' Casks/cyberdog.rb)
+          if [ "$version" = "$current" ]; then echo "Already at $current"; exit 0; fi
+          sums=$(gh release download "$tag" --repo "$UPSTREAM" -p SHA256SUMS.txt -O -)
+          arm=$(printf '%s\n' "$sums" | awk '/-mac-arm64\.dmg$/ {print $1}')
+          intel=$(printf '%s\n' "$sums" | awk '/-mac-x64\.dmg$/ {print $1}')
+          if [ -z "$arm" ] || [ -z "$intel" ]; then echo "DMG checksums missing for $tag"; exit 1; fi
+          sed -i \
+            -e "s/^  version \".*\"\$/  version \"$version\"/" \
+            -e "s/^  sha256 arm:   \".*\",\$/  sha256 arm:   \"$arm\",/" \
+            -e "s/^         intel: \".*\"\$/         intel: \"$intel\"/" \
+            Casks/cyberdog.rb
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "cyberdog $version"
+          git push
