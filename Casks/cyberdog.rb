@@ -1,9 +1,9 @@
 cask "cyberdog" do
   arch arm: "arm64", intel: "x64"
 
-  version "1.11.0"
-  sha256 arm:   "851116b28a0391a4ac4707841105f36b51e80fe82bde4c051e2f9eb6134fceb9",
-         intel: "67664ca352cafc1fb58a8456e4f024e46f50b83ecce368a486f894e5c60d1cbd"
+  version "1.12.0"
+  sha256 arm:   "d0fc752c2f06a10806d5e133dcf234430c81a5a30cbc2bb901e2e1f69c6178a8",
+         intel: "86ef8e53ab323fab5fd696cedd75da4f6c3c660e153c5ca8aecd2042d3d8fc73"
 
   url "https://github.com/pickywawa/cyberdog/releases/download/v#{version}/Cyberdog-#{version}-mac-#{arch}.dmg"
   name "Cyberdog"
